@@ -1,0 +1,223 @@
+import axios from "axios";
+import {useState, useEffect} from 'react';
+import {useParams} from "react-router-dom";
+import Container from "react-bootstrap/Container";
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Badge from 'react-bootstrap/Badge';
+import Button from 'react-bootstrap/Button';
+
+import noPosterFound from "../assets/No_Poster.jpg";
+import CarouselComponent from "./CarouselComponent";
+import CastCarousel from "./CastCarousel";
+import MovieList from "./MovieList";
+
+import styles from "./MovieDetail.module.css";
+
+const MovieDetail = () => {
+    const [movie, setMovie] = useState([]);
+    const [images, setImages] = useState([]);
+    const [count, setCount]= useState(1);
+    const [similar, setSimilar] = useState([]);
+    const [loading, setLoading]=useState(true);
+    const [cast, setCast]=useState([]);
+    const [trailer, setTrailer] = useState("");
+    const [video, setVideo]=useState("");
+    const { id } = useParams();
+
+    const countHandler=()=>{
+        setCount(count+1);
+    }
+
+    const fetchMovies=async()=>{
+
+        if(count===1){
+
+            setLoading(true);
+
+            try{
+                const movieData=await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
+                .then(res => res.data);
+
+                setMovie(movieData);
+            }catch(error){
+                console.log(error);
+            }
+
+            try{
+
+                const videoData=await axios.get(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=${count}`)
+                .then(res => res.data)
+                .then(data=>data.results);
+
+                if(videoData.length > 0){
+
+                    const trailerData=videoData.filter((trailer)=>{
+                        return trailer.name.toLowerCase().includes("trailer");
+                    });
+                
+                    if(trailerData.length > 0) {
+                        setVideo("");
+                        setTrailer(trailerData[0].key);
+                    }else{
+                        setTrailer("");
+                        setVideo(videoData[0].key);
+                    }
+                }
+    
+            }catch(error){
+                console.log(error);
+            }
+
+            try{
+                const movieImages=await axios.get(`https://api.themoviedb.org/3/movie/${id}/images?api_key=${process.env.REACT_APP_API_KEY}&append_to_response=images&include_image_language=en,null`)
+                .then(res => res.data);
+    
+                setImages(movieImages.backdrops);
+
+            }catch(error){
+                console.log(error);
+            }
+
+            try{
+                const movieCast=await axios.get(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
+                .then(res => res.data)
+                .then(data => data.cast);
+                
+                const actorData=movieCast.filter((cast)=>{
+                    return cast.known_for_department.toLowerCase()==="acting";
+                });
+
+                setCast(actorData);
+
+            }catch(error){
+                console.log(error);
+            }
+
+            setLoading(false);
+        }
+
+        try{
+
+            const similarMovieData=await axios.get(`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=${count}`)
+            .then(res => res.data);
+
+            setSimilar(similar.concat(similarMovieData.results));
+
+        }catch(error){
+            console.log(error);
+        }
+    };
+
+    useEffect(()=>{
+        fetchMovies();
+        // eslint-disable-next-line
+    },[count]);
+
+    return (
+        <Container style={{marginTop:"10px"}}>
+            {
+                loading?
+                <h3><i className="fas fa-hourglass-half" />&nbsp;Loading...</h3>
+                :
+                <>
+                    <Row style={{justifyContent:"center"}}>
+                        <Col md={4} className={styles.poster}>
+                            <img
+                                className="d-block w-100"
+                                src={movie.poster_path?`https://image.tmdb.org/t/p/original${movie.poster_path}`:noPosterFound}
+                                alt={movie.id}
+                                style={{border:"2px solid white"}}
+                            />
+                        </Col>
+                        <Col md={8}>
+                            {images && <CarouselComponent items={images}/>}
+                            <div style={{display:"flex", justifyContent:"center", marginTop:"40px"}}>
+
+                                {trailer && <Button href={`https://www.youtube.com/watch?v=${trailer}`} target="_blank" variant="danger" style={{marginRight:"10px", backgroundColor:"red"}}><i className="fab fa-youtube" />&nbsp;Trailer</Button>}
+                                {video && <Button href={`https://www.youtube.com/watch?v=${video}`} target="_blank" variant="danger" style={{marginRight:"10px", backgroundColor:"red"}}><i className="fab fa-youtube" />&nbsp;Video</Button>}
+                                {!trailer && !video && <Button variant="danger" style={{marginRight:"10px"}} disabled><i className="fab fa-youtube" />&nbsp;Trailer</Button>}
+
+                                {movie.homepage && <Button href={movie.homepage} variant="primary" target="_blank" style={{marginRight:"10px"}}><i className="fas fa-play-circle"></i>&nbsp;Website</Button>}
+                                {!movie.homepage && <Button variant="primary" style={{marginRight:"10px"}} disabled><i className="fas fa-play-circle"></i>&nbsp;Website</Button>}
+
+                                {movie.imdb_id && <Button href={`https://www.imdb.com/title/${movie.imdb_id}`} variant="warning" target="_blank"><i className="fa-solid fa-star" />&nbsp;IMDb</Button>}
+                                {!movie.imdb_id && <Button variant="warning" disabled><i className="fa-solid fa-star"/>&nbsp;IMDb</Button>}
+                                
+                            </div>
+                        </Col>
+                    </Row>
+                    <br />
+                    <Row>
+                        <Col md={4}>
+                            <h2><b className={styles.title}>{movie.title}</b></h2>
+                            {movie.genres && 
+                                <div>
+                                    {    
+                                        movie.genres.map( (genre) =>(
+                                        <span key={genre.name}>
+                                            <Badge pill bg="info">{genre.name}</Badge>&nbsp;&nbsp;
+                                        </span>
+                                        ))
+                                    }
+                                </div>
+                            }  
+                            {movie.genres.length===0 && <Badge pill bg="info">No genre Available</Badge>}          
+
+                            {movie.spoken_languages &&
+                                <div style={{marginTop:"10px"}}>
+                                {
+                                    movie.spoken_languages.map((lang)=>(
+                                    <span key={lang.english_name}>
+                                        <Badge style={{margin:"5px"}}>{lang.english_name}</Badge>&nbsp;&nbsp;
+                                    </span>
+                                    ))
+                                }
+                                </div>
+                            }
+                            {movie.spoken_languages.length===0 && <Badge>No language Available</Badge>}                        
+
+                            {movie.release_date && <h5 className={styles.font_manager}>Released On : {movie.release_date}</h5>}
+                            {!movie.release_date && <h5 className={styles.font_manager}>Release date not available!</h5>}
+                        </Col>
+                        <Col md={8}>
+                            <Col xs={8} md={6} style={{display:"flex", justifyContent: "space-between"}}>
+                                {movie.vote_average!==0 && <h5 className={styles.font_manager} style={{color:"goldenrod"}}><i className="fa-solid fa-star" />&nbsp;{movie.vote_average}&nbsp;&nbsp;({movie.vote_count} votes)</h5>}
+                                {movie.vote_average===0 && <h5 className={styles.font_manager} style={{color:"goldenrod"}}><i className="fa-solid fa-star" />&nbsp;{movie.vote_average}&nbsp;&nbsp;({movie.vote_count} votes)</h5>}
+
+                                {movie.runtime!==0 && <h5 className={styles.font_manager}><i className="fas fa-clock" />&nbsp;{movie.runtime} mins.</h5>}
+                                {movie.runtime===0 && <h5 className={styles.font_manager}><i className="fas fa-clock" />&nbsp;{movie.runtime} mins.</h5>}
+                            </Col>
+                            {movie.tagline!=="" && <h5 className={styles.font_manager}><i><b>"{movie.tagline}"</b></i></h5>}
+                            {movie.tagline==="" && <h5 className={styles.font_manager}><i><b>No tagline available</b></i></h5>}
+
+                            {movie.overview!=="" && <h5 className={styles.font_manager}>{movie.overview}</h5>}
+                            {movie.overview==="" && <h5 className={styles.font_manager}>No overview available</h5>}
+                        </Col>
+                    </Row>
+                    <Row>
+                    </Row>
+                    {cast.length>0 &&
+            
+                        <>
+                            <h3><Badge bg="secondary">Movie Cast</Badge>&nbsp;&nbsp;</h3>
+                            <CastCarousel cast={cast} />
+                        </>
+                    }
+                    {cast.length===0 && <h3>Movie Cast data not available!</h3>}
+                    <Row>
+                        <h3><Badge pill bg="primary" style={{textTransform: "uppercase"}}>Similar</Badge></h3>
+                        <MovieList items={similar} />
+                    </Row>
+                    {similar.length > 0 && 
+                        <div style={{display:"flex",justifyContent: "center"}}>
+                            <Button onClick={countHandler} variant="outline-primary" style={{margin:"20px"}}  size="lg">Load More</Button>
+                        </div>
+                    }
+                </>
+            }
+        </Container>
+    )
+}
+
+export default MovieDetail;
