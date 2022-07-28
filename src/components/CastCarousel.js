@@ -20,7 +20,7 @@ const CastCarousel = (props) => {
 
   const responsive = {
     0: {
-      items: 4,
+      items: 3,
     },
     512: {
       items: 5,
