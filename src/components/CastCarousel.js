@@ -12,7 +12,7 @@ const CastCarousel = (props) => {
         src={actor.profile_path?`https://image.tmdb.org/t/p/original${actor.profile_path}`:noPictureFound}
         alt={actor.name}
         onDragStart={handleDragStart}
-        style={{borderRadius:"10px", maxWidth:"150px"}}
+        style={{borderRadius:"10px", maxHeight:'175px', maxWidth:"150px"}}
       />
       {actor.name && <b style={{textAlign: 'center', paddingTop:"5px"}}>{actor.name}</b>}
     </div>

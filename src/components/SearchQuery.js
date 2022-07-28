@@ -24,10 +24,6 @@ const SearchQuery = () => {
         setCount(count-1);
     };
 
-    const countHandler=()=>{
-        setCount(count+1);
-    }
-
     const fetchSearch=async ()=>{
 
         console.log(query);
