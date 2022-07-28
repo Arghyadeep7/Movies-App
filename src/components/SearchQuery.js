@@ -52,31 +52,15 @@ const SearchQuery = () => {
 
     return (
         <Container>
-            {/* <Form className="d-flex" onSubmit={submitHandler}>
-              <Form.Control
-                type="text"
-                placeholder="Search..."
-                className="me-2"
-                aria-label="Search"
-                ref={inputRef}
-                style={{fontWeight:"bold", fontSize:"17px"}}
-              />
-              <Button variant="light" type="submit"><i className="fa-solid fa-magnifying-glass"/></Button>
-            </Form>
-            <br /> */}
-            {/* {query &&
-                <> */}
-                    <h2><Badge bg="dark">{loading?"Searching":"Search"} results for "{query}"</Badge></h2>
-                    <h3><Badge pill bg="dark" style={{textTransform: "uppercase"}}>PAGE {count} / {total_pages}</Badge></h3>
-                    <MovieList items={movies} />
-                    <div style={{display:"flex",justifyContent: "center"}}>
-                    {count>1 && <Button onClick={previousPageHandler} variant="outline-warning" style={{margin:"20px"}} size="lg"><i className="fas fa-angle-double-left" />&nbsp;Previous</Button>}
-                    {count===1 && <Button onClick={previousPageHandler} variant="outline-warning" style={{margin:"20px"}} size="lg" disabled><i className="fas fa-angle-double-left" />&nbsp;Previous</Button>}
-                    {count!==total_pages && <Button onClick={nextPageHandler} variant="outline-primary" style={{margin:"20px"}}  size="lg">Next&nbsp;<i className="fas fa-angle-double-right" /></Button>}
-                    {count===total_pages && <Button onClick={nextPageHandler} variant="outline-primary" style={{margin:"20px"}}  size="lg" disabled>Next&nbsp;<i className="fas fa-angle-double-right" /></Button>}
-                    </div>
-                {/* </>
-            } */}
+            <h2><Badge bg="dark">{loading?"Searching":"Search"} results for "{query}"</Badge></h2>
+            <h3><Badge pill bg="dark" style={{textTransform: "uppercase"}}>PAGE {count} / {total_pages}</Badge></h3>
+            <MovieList items={movies} />
+            <div style={{display:"flex",justifyContent: "center"}}>
+            {count>1 && <Button onClick={previousPageHandler} variant="outline-warning" style={{margin:"20px"}} size="lg"><i className="fas fa-angle-double-left" />&nbsp;Previous</Button>}
+            {count===1 && <Button onClick={previousPageHandler} variant="outline-warning" style={{margin:"20px"}} size="lg" disabled><i class="fas fa-times-circle"/>&nbsp;Previous</Button>}
+            {count!==total_pages && <Button onClick={nextPageHandler} variant="outline-primary" style={{margin:"20px"}}  size="lg">Next&nbsp;<i className="fas fa-angle-double-right" /></Button>}
+            {count===total_pages && <Button onClick={nextPageHandler} variant="outline-primary" style={{margin:"20px"}}  size="lg" disabled>Next&nbsp;<i class="fas fa-times-circle"/></Button>}
+            </div>
         </Container>
     );
 }
