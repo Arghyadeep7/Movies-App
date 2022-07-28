@@ -54,7 +54,7 @@ const MovieComponent = (props) => {
           <h3><i className="fas fa-hourglass-half" />&nbsp;Loading...</h3>
         :
         <>
-          <h3><Badge pill bg="primary" style={{textTransform: "uppercase"}}>{type}</Badge></h3>
+          <h3><Badge pill bg="primary" style={{textTransform: "uppercase"}}>{props.type}</Badge></h3>
           <CarouselComponent items={movies} id=""/>
           <br />
           <h3><Badge pill bg="dark" style={{textTransform: "uppercase"}}>PAGE {count} / {total_pages}</Badge></h3>
