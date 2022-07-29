@@ -21,7 +21,7 @@ const Header = () => {
 
   return (
     <Navbar collapseOnSelect expand="md" variant="dark" sticky="top" style={{backgroundColor: "black", marginTop:"10px"}}>
-      <Navbar.Brand><Link to="/movies/now_playing" className={styles.navBrand}>MOVIES APP</Link></Navbar.Brand>
+      <Navbar.Brand><Link to="/movies/now_playing" className={styles.navBrand}><i class="fas fa-video"></i>&nbsp;MOVIES APP</Link></Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav" style={{color:"white"}}>
         <Nav className="me-auto">
@@ -46,7 +46,7 @@ const Header = () => {
           </b>
         </Nav>
         <Nav>
-          <Navbar.Brand href="https://tv-series-app-arghyadeep7.vercel.app/tv/trending" style={{color:'yellow'}} className={styles.connector} target="_blank">TV SERIES APP</Navbar.Brand>
+          <Navbar.Brand href="https://tv-series-app-arghyadeep7.vercel.app/tv/trending" style={{color:'yellow'}} className={styles.connector} target="_blank"><i class="fas fa-tv"></i>&nbsp;TV SERIES APP</Navbar.Brand>
           <Form className="d-flex" onSubmit={submitHandler}>
             <Form.Control
               type="text"
