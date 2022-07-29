@@ -1,7 +1,6 @@
 import axios from "axios";
 import {useState, useEffect} from 'react';
-import {useParams} from "react-router-dom";
-import Container from "react-bootstrap/Container";
+import {useParams, useNavigate} from "react-router-dom";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
@@ -25,9 +24,15 @@ const MovieDetail = () => {
     const [video, setVideo]=useState("");
     const { id } = useParams();
 
+    const navigate=useNavigate();
+
     const countHandler=()=>{
         setCount(count+1);
     }
+
+    const Undefined=()=>{
+        navigate("/error");
+    };
 
     const fetchMovies=async()=>{
 
@@ -36,23 +41,22 @@ const MovieDetail = () => {
             setLoading(true);
 
             try{
-                const movieData=await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
+                const data=await axios.get(`https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_API_KEY}&append_to_response=images,videos,credits,similar`)
                 .then(res => res.data);
 
-                setMovie(movieData);
-            }catch(error){
-                console.log(error);
-            }
+                setMovie(data);
 
-            try{
+                setImages(data.images.backdrops);
 
-                const videoData=await axios.get(`https://api.themoviedb.org/3/movie/${id}/videos?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=${count}`)
-                .then(res => res.data)
-                .then(data=>data.results);
+                const actorData=data.credits.cast.filter((cast)=>{
+                    return cast.known_for_department.toLowerCase()==="acting";
+                });
 
-                if(videoData.length > 0){
+                setCast(actorData);
 
-                    const trailerData=videoData.filter((trailer)=>{
+                if(data.videos.results.length > 0){
+
+                    const trailerData=data.videos.results.filter((trailer)=>{
                         return trailer.name.toLowerCase().includes("trailer");
                     });
                 
@@ -61,51 +65,36 @@ const MovieDetail = () => {
                         setTrailer(trailerData[0].key);
                     }else{
                         setTrailer("");
-                        setVideo(videoData[0].key);
+                        setVideo(data.videos.results[0].key);
                     }
                 }
-    
-            }catch(error){
-                console.log(error);
-            }
 
-            try{
-                const movieImages=await axios.get(`https://api.themoviedb.org/3/movie/${id}/images?api_key=${process.env.REACT_APP_API_KEY}&append_to_response=images&include_image_language=en,null`)
-                .then(res => res.data);
-    
-                setImages(movieImages.backdrops);
+                setSimilar(data.similar.results);
 
             }catch(error){
                 console.log(error);
-            }
 
-            try{
-                const movieCast=await axios.get(`https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`)
-                .then(res => res.data)
-                .then(data => data.cast);
-                
-                const actorData=movieCast.filter((cast)=>{
-                    return cast.known_for_department.toLowerCase()==="acting";
-                });
+                Undefined();
 
-                setCast(actorData);
-
-            }catch(error){
-                console.log(error);
+                return;
             }
 
             setLoading(false);
-        }
+        }else{
+            try{
 
-        try{
-
-            const similarMovieData=await axios.get(`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${process.env.REACT_APP_API_KEY}&language=en-US&page=${count}`)
-            .then(res => res.data);
-
-            setSimilar(similar.concat(similarMovieData.results));
-
-        }catch(error){
-            console.log(error);
+                const similarTvSeriesData=await axios.get(`https://api.themoviedb.org/3/movie/${id}/similar?api_key=${process.env.REACT_APP_API_KEY}&page=${count}`)
+                .then(res => res.data);
+    
+                setSimilar(similar.concat(similarTvSeriesData.results));
+    
+            }catch(error){
+                console.log(error);
+    
+                Undefined();
+    
+                return;
+            }
         }
     };
 
@@ -115,7 +104,7 @@ const MovieDetail = () => {
     },[count]);
 
     return (
-        <Container style={{marginTop:"10px"}}>
+        <Row style={{marginTop:"10px"}}>
             {
                 loading?
                 <h3><i className="fas fa-hourglass-half" />&nbsp;Loading...</h3>
@@ -216,7 +205,7 @@ const MovieDetail = () => {
                     }
                 </>
             }
-        </Container>
+        </Row>
     )
 }
 

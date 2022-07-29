@@ -1,6 +1,5 @@
 import {useState, useEffect} from 'react';
 import {useParams} from "react-router-dom";
-import Container from "react-bootstrap/Container";
 import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 // import Form from "react-bootstrap/Form";
@@ -30,7 +29,7 @@ const SearchQuery = () => {
 
         setLoading(true);
         
-        const searchData=await fetch(`https://api.themoviedb.org/3/search/movie?api_key=e43874a5a2c400ac2dd1d058b954f69f&language=en-US&include_adult=true&page=${count}&query=${query}`)
+        const searchData=await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${process.env.REACT_APP_API_KEY}&include_adult=true&page=${count}&query=${query}`)
         .then(res => res.json());
 
         setMovies(searchData.results);
@@ -47,7 +46,7 @@ const SearchQuery = () => {
     }, [count,query]);
 
     return (
-        <Container>
+        <>
             <h2><Badge bg="dark">{loading?"Searching":"Search"} results for "{query}"</Badge></h2>
             <h3><Badge pill bg="dark" style={{textTransform: "uppercase"}}>PAGE {count} / {total_pages}</Badge></h3>
             <MovieList items={movies} />
@@ -57,7 +56,7 @@ const SearchQuery = () => {
             {count!==total_pages && <Button onClick={nextPageHandler} variant="outline-primary" style={{margin:"20px"}}  size="lg">Next&nbsp;<i className="fas fa-angle-double-right" /></Button>}
             {count===total_pages && <Button onClick={nextPageHandler} variant="outline-primary" style={{margin:"20px"}}  size="lg" disabled>Next&nbsp;<i class="fas fa-times-circle"/></Button>}
             </div>
-        </Container>
+        </>
     );
 }
 

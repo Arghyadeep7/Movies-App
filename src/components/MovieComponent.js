@@ -1,6 +1,5 @@
 import axios from "axios";
 import {useState, useEffect} from 'react';
-import Container from 'react-bootstrap/Container';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 
@@ -48,7 +47,7 @@ const MovieComponent = (props) => {
 
 
   return (
-    <Container>
+    <>
       {
         isLoading?
           <h3><i className="fas fa-hourglass-half" />&nbsp;Loading...</h3>
@@ -67,7 +66,7 @@ const MovieComponent = (props) => {
           </div>
         </>
       }
-    </Container>
+    </>
   );
 }
 

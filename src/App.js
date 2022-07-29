@@ -10,7 +10,7 @@ import SearchQuery from "./components/SearchQuery";
 function App() {
 
   return (
-    <div>
+    <Container>
       <Header/>
       <Routes>
         <Route
@@ -24,17 +24,10 @@ function App() {
         <Route path="/movies/trending" element={<MovieComponent type="trending"/>} />
         <Route path="/movie/:id" element={<MovieDetail />} />
         <Route path="/search/:query" element={<SearchQuery />} />
-        <Route
-          path="*"
-          element={
-            <Container>
-              <h1>Error, this page doesnot exist !</h1>
-            </Container>
-          }
-        />
+        <Route path="*" element={<h1>Error, this page doesnot exist !</h1>} />
       </Routes>
       <Footer />
-    </div>
+    </Container>
   );
 }
 
