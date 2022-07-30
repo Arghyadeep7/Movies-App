@@ -56,8 +56,6 @@ const MovieDetail = () => {
 
                 setCast(actorData);
 
-                setVideos(data.videos.results);
-
                 if(data.videos.results.length > 0){
 
                     const trailerData=data.videos.results.filter((trailer)=>{
@@ -68,6 +66,12 @@ const MovieDetail = () => {
                         setTrailer(trailerData[0].key);
                     }
                 }
+
+                const videoData=data.videos.results.filter((video)=>{
+                    return video.key!=trailer;
+                });
+
+                setVideos(videoData);
 
                 setSimilar(data.similar.results);
 
