@@ -26,7 +26,7 @@ const Header = () => {
       <Navbar.Collapse id="responsive-navbar-nav" style={{color:"white"}}>
         <Nav className="me-auto">
           <b>
-            <NavDropdown title="Filter by" id="collasible-nav-dropdown">
+            <NavDropdown title="Filter by" id="collasible-nav-dropdown" >
               <NavDropdown.Item className={styles.navLink} href="/movies/now_playing">
                 NOW PLAYING
               </NavDropdown.Item>
