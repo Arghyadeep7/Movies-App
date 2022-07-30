@@ -23,7 +23,6 @@ const MovieDetail = () => {
     const [loading, setLoading]=useState(true);
     const [cast, setCast]=useState([]);
     const [videos, setVideos]=useState("");
-    const [trailer, setTrailer] = useState("");
     const { id } = useParams();
 
     const navigate=useNavigate();
@@ -56,22 +55,7 @@ const MovieDetail = () => {
 
                 setCast(actorData);
 
-                if(data.videos.results.length > 0){
-
-                    const trailerData=data.videos.results.filter((trailer)=>{
-                        return trailer.name.toLowerCase().includes("trailer");
-                    });
-                
-                    if(trailerData.length > 0) {
-                        setTrailer(trailerData[0].key);
-                    }
-                }
-
-                const videoData=data.videos.results.filter((video)=>{
-                    return video.key!=trailer;
-                });
-
-                setVideos(videoData);
+                setVideos(data.videos.results);
 
                 setSimilar(data.similar.results);
 
@@ -128,13 +112,9 @@ const MovieDetail = () => {
 
                             <div style={{display:"flex", justifyContent:"space-evenly", marginTop:"40px"}}>
 
-                                {trailer && <Button href={`https://www.youtube.com/watch?v=${trailer}`} target="_blank" variant="danger" style={{marginRight:"10px", backgroundColor:"red"}}><i className="fab fa-youtube" />&nbsp;Trailer</Button>}
-
-                                {movie.homepage && <Button href={movie.homepage} variant="primary" target="_blank" style={{marginRight:"10px"}}><i className="fas fa-play-circle"></i>&nbsp;Website</Button>}
-                                {!movie.homepage && <Button variant="primary" style={{marginRight:"10px"}} disabled><i className="fas fa-play-circle"></i>&nbsp;Website</Button>}
+                                {movie.homepage && <Button href={movie.homepage} variant="primary" target="_blank"><i className="fas fa-play-circle"></i>&nbsp;Website</Button>}
 
                                 {movie.imdb_id && <Button href={`https://www.imdb.com/title/${movie.imdb_id}`} variant="warning" target="_blank"><i className="fa-solid fa-star" />&nbsp;IMDb</Button>}
-                                {!movie.imdb_id && <Button variant="warning" disabled><i className="fa-solid fa-star"/>&nbsp;IMDb</Button>}
 
                                 {videos.length>0 &&
                                     <DropdownButton
@@ -154,7 +134,7 @@ const MovieDetail = () => {
 
                     <br />
                     
-                    <Row>
+                    <Row style={{marginTop:'20px'}}>
                         <Col md={4}>
                             <h2><b className={styles.title}>{movie.title}</b></h2>
                             {movie.genres && 
