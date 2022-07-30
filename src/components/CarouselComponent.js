@@ -16,6 +16,18 @@ const CarouselComponent = (props) => {
       </Carousel>
     );
   }
+
+  if(props.items.length === 1){
+    return (
+      <Carousel controls={false} indicators={false}>
+        <Carousel.Item style={{border:"2px solid white"}}>
+          <img className="d-block w-100" src={`https://image.tmdb.org/t/p/original${props.items[0].file_path}`} alt="No Images Available"/>
+        </Carousel.Item>
+      </Carousel>
+    );
+  }
+
+  
   return (
     <Carousel> 
       {

@@ -121,11 +121,11 @@ const MovieDetail = () => {
                         </Col>
                         <Col md={8}>
                             {images && <CarouselComponent items={images}/>}
+
                             <div style={{display:"flex", justifyContent:"center", marginTop:"40px"}}>
 
                                 {trailer && <Button href={`https://www.youtube.com/watch?v=${trailer}`} target="_blank" variant="danger" style={{marginRight:"10px", backgroundColor:"red"}}><i className="fab fa-youtube" />&nbsp;Trailer</Button>}
                                 {video && <Button href={`https://www.youtube.com/watch?v=${video}`} target="_blank" variant="danger" style={{marginRight:"10px", backgroundColor:"red"}}><i className="fab fa-youtube" />&nbsp;Video</Button>}
-                                {!trailer && !video && <Button variant="danger" style={{marginRight:"10px"}} disabled><i className="fab fa-youtube" />&nbsp;Trailer</Button>}
 
                                 {movie.homepage && <Button href={movie.homepage} variant="primary" target="_blank" style={{marginRight:"10px"}}><i className="fas fa-play-circle"></i>&nbsp;Website</Button>}
                                 {!movie.homepage && <Button variant="primary" style={{marginRight:"10px"}} disabled><i className="fas fa-play-circle"></i>&nbsp;Website</Button>}
@@ -136,7 +136,9 @@ const MovieDetail = () => {
                             </div>
                         </Col>
                     </Row>
+
                     <br />
+                    
                     <Row>
                         <Col md={4}>
                             <h2><b className={styles.title}>{movie.title}</b></h2>
