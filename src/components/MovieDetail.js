@@ -5,6 +5,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
+import Dropdown from 'react-bootstrap/Dropdown';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 
 import noPosterFound from "../assets/No_Poster.jpg";
 import CarouselComponent from "./CarouselComponent";
@@ -20,8 +22,8 @@ const MovieDetail = () => {
     const [similar, setSimilar] = useState([]);
     const [loading, setLoading]=useState(true);
     const [cast, setCast]=useState([]);
+    const [videos, setVideos]=useState("");
     const [trailer, setTrailer] = useState("");
-    const [video, setVideo]=useState("");
     const { id } = useParams();
 
     const navigate=useNavigate();
@@ -54,6 +56,8 @@ const MovieDetail = () => {
 
                 setCast(actorData);
 
+                setVideos(data.videos.results);
+
                 if(data.videos.results.length > 0){
 
                     const trailerData=data.videos.results.filter((trailer)=>{
@@ -61,11 +65,7 @@ const MovieDetail = () => {
                     });
                 
                     if(trailerData.length > 0) {
-                        setVideo("");
                         setTrailer(trailerData[0].key);
-                    }else{
-                        setTrailer("");
-                        setVideo(data.videos.results[0].key);
                     }
                 }
 
@@ -122,16 +122,27 @@ const MovieDetail = () => {
                         <Col md={8}>
                             {images && <CarouselComponent items={images}/>}
 
-                            <div style={{display:"flex", justifyContent:"center", marginTop:"40px"}}>
+                            <div style={{display:"flex", justifyContent:"space-evenly", marginTop:"40px"}}>
 
                                 {trailer && <Button href={`https://www.youtube.com/watch?v=${trailer}`} target="_blank" variant="danger" style={{marginRight:"10px", backgroundColor:"red"}}><i className="fab fa-youtube" />&nbsp;Trailer</Button>}
-                                {video && <Button href={`https://www.youtube.com/watch?v=${video}`} target="_blank" variant="danger" style={{marginRight:"10px", backgroundColor:"red"}}><i className="fab fa-youtube" />&nbsp;Video</Button>}
 
                                 {movie.homepage && <Button href={movie.homepage} variant="primary" target="_blank" style={{marginRight:"10px"}}><i className="fas fa-play-circle"></i>&nbsp;Website</Button>}
                                 {!movie.homepage && <Button variant="primary" style={{marginRight:"10px"}} disabled><i className="fas fa-play-circle"></i>&nbsp;Website</Button>}
 
                                 {movie.imdb_id && <Button href={`https://www.imdb.com/title/${movie.imdb_id}`} variant="warning" target="_blank"><i className="fa-solid fa-star" />&nbsp;IMDb</Button>}
                                 {!movie.imdb_id && <Button variant="warning" disabled><i className="fa-solid fa-star"/>&nbsp;IMDb</Button>}
+
+                                {videos.length>0 &&
+                                    <DropdownButton
+                                        variant="outline-danger"
+                                        title="VIDEOS"
+                                        id="input-group-dropdown-1"
+                                    >
+                                    {videos.map((video)=>(
+                                        <Dropdown.Item key={video.key} target="_blank" href={`https://www.youtube.com/watch?v=${video.key}`}>{video.name}</Dropdown.Item>
+                                    ))}
+                                    </DropdownButton>
+                                }
                                 
                             </div>
                         </Col>
